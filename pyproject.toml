@@ -1,0 +1,28 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "comfyui-mcp-lite"
+version = "0.1.0"
+description = "Thin MCP server for a local ComfyUI: 11 tools, stdlib HTTP client, no comfy-cli dependency."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "martintsan" }]
+keywords = ["comfyui", "mcp", "model-context-protocol", "image-generation"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Topic :: Multimedia :: Graphics",
+    "License :: OSI Approved :: MIT License",
+]
+dependencies = ["mcp>=2.3,<3"]
+
+[project.scripts]
+comfyui-mcp-lite = "comfy_mcp_lite.server:main"
+
+[project.urls]
+Homepage = "https://github.com/martintsan/comfyui-mcp-lite"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/comfy_mcp_lite"]
