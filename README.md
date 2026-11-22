@@ -39,10 +39,22 @@ uvx --from git+https://github.com/martintsan/comfyui-mcp-lite comfyui-mcp-lite -
 
 ### pi
 
+最简形式（`COMFY_URL` 默认就是 `http://127.0.0.1:8188`，多数情况下不需要 env）：
+
+```bash
+pi mcp add comfy -- uvx --from git+https://github.com/martintsan/comfyui-mcp-lite comfyui-mcp-lite
+```
+
+需要传环境变量时加 `--env`（可重复）：
+
 ```bash
 pi mcp add comfy --env COMFY_URL=http://127.0.0.1:8188 -- \
   uvx --from git+https://github.com/martintsan/comfyui-mcp-lite comfyui-mcp-lite
 ```
+
+> `Error: Unknown option: --env` —— 你的 pi 版本偏旧（`pi mcp add` 的 `--env`/`--cwd` 是较近版本才有的，1.6.0 可用）。
+> 三个办法：① 直接省略 `--env`，用上面的最简形式；② 升级 pi（`pi update`，或 `npm install -g --ignore-scripts @earendil-works/pi-coding-agent@latest`）；
+> ③ 不折腾 CLI，手改下面这段 JSON。用 `pi mcp add --help` 看你本机支持哪些选项。
 
 **建议补 `timeout`**（`pi mcp add` 不写这个字段，手动编辑 `~/.pi/agent/mcp.json`）：默认 60s，而冷启动第一次出图常常超过 60s 会被掐。
 
@@ -101,6 +113,16 @@ PRESETS["mine"] = (_wf_mine, 20, 3.5, "euler", "simple", "我的默认档")
 ```
 
 不想改代码就用 `comfy_run_workflow` 传完整工作流。
+
+## 排坑
+
+| 现象 | 处理 |
+|---|---|
+| `Unknown option: --env` | pi 版本旧，省略 `--env` 或升级 pi 或直接写 JSON（见上） |
+| `command not found: uvx` | 先 `pip install uv`（或 `brew install uv`），确认 `which uvx` 有输出；GUI 客户端用绝对路径 |
+| 工具返回 `连不上 ComfyUI` | ComfyUI 没跑，或 `COMFY_URL` 不对；`curl -s <COMFY_URL>/system_stats` 先自测 |
+| 冷启动那张图报超时 | 把客户端的 MCP 请求超时调大（pi 在 `mcp.json` 里 `"timeout": 900`） |
+| 出图失败 | 返回的是 `{"error": "..."}` 而不是抛异常，里面带着 ComfyUI 的节点名和异常文本，对着它改 prompt / 分辨率 / preset |
 
 ## 注意
 
